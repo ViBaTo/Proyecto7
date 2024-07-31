@@ -2,11 +2,13 @@ const User = require('../models/users')
 const jwt = require('jsonwebtoken')
 
 const generateToken = (id) => {
-  return jwt.sign({ id }, process.env.JWT_SECRET.trim(), {
-    expiresIn: '30d'
-  })
+  return jwt.sign({ id }, process.env.jwt_SECRET, { expiresIn: '30d' })
 }
+//Comprobar si la llave a sido creada por el cerrajero de confianza
 
+const verifyJwt = (token) => {
+  return jwt.verify(token, process.en.JWT_SECRET)
+}
 const registerUser = async (req, res) => {
   const { name, email, password } = req.body
 
@@ -86,5 +88,6 @@ const authUser = async (req, res) => {
 module.exports = {
   registerUser,
   authUser,
-  registerAdmin
+  registerAdmin,
+  verifyJwt
 }
