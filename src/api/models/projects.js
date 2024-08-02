@@ -10,17 +10,19 @@ const projectSchema = new mongoose.Schema(
     createdBy: {
       type: mongoose.Schema.Types.ObjectId,
       ref: 'User',
-      required: true
+      required: false
     },
     products: [
       {
         type: mongoose.Schema.Types.ObjectId,
-        ref: 'Product'
+        ref: 'products',
+        required: false
       }
     ]
   },
   {
-    timestamps: true
+    timestamps: true,
+    collection: 'projects'
   }
 )
 

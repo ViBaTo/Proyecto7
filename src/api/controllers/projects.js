@@ -10,13 +10,11 @@ const getProjects = async (req, res) => {
 }
 
 const postProject = async (req, res) => {
-  const { name, productType } = req.body
+  const { name } = req.body
 
   try {
     const project = new Project({
-      name,
-      productType,
-      createdBy: req.user._id
+      name
     })
 
     const createdProject = await project.save()

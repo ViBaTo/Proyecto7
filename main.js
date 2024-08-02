@@ -1,8 +1,7 @@
 require('dotenv').config()
 const express = require('express')
-const mongoose = require('mongoose')
 const { connectDB } = require('./src/config/db')
-
+/* const mongoose = require('mongoose') */
 const projectRoutes = require('./src/api/routes/projects')
 const userRoutes = require('./src/api/routes/users')
 const productRoutes = require('./src/api/routes/products')

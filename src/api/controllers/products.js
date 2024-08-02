@@ -19,8 +19,7 @@ const postProduct = async (req, res) => {
     const product = new Product({
       name,
       productType,
-      project,
-      createdBy: req.user._id
+      project
     })
 
     const createdProduct = await product.save()

@@ -17,7 +17,7 @@ const userSchema = new mongoose.Schema(
       required: true
     },
     role: {
-      type: [String],
+      type: String,
       enum: ['gerente', 'comercial'],
       default: 'comercial'
     }
@@ -27,6 +27,10 @@ const userSchema = new mongoose.Schema(
     collection: 'users'
   }
 )
+
+userSchema.pre('save', function () {
+  this.password = bcrypt.hashSync(this.password, 10)
+})
 
 const User = mongoose.model('users', userSchema, 'users')
 
