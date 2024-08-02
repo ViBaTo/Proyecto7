@@ -19,8 +19,10 @@ const productSchema = new mongoose.Schema(
       type: mongoose.Schema.Types.ObjectId,
       ref: 'User',
       required: false
-    }
+    },
+    verified: { type: Boolean, required: true, default: false }
   },
+
   {
     timestamps: true,
     collection: 'products'
