@@ -5,7 +5,7 @@ const { connectDB } = require('./src/config/db')
 const projectRoutes = require('./src/api/routes/projects')
 const userRoutes = require('./src/api/routes/users')
 const productRoutes = require('./src/api/routes/products')
-
+const seedData = require('./src/utils/seeds')
 const app = express()
 
 connectDB()
