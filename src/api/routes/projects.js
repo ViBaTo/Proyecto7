@@ -1,5 +1,5 @@
 const express = require('express')
-const { protect, admin } = require('../../middlewares/Auth')
+
 const {
   getProjects,
   postProject,
@@ -7,16 +7,14 @@ const {
   deleteProject
 } = require('../controllers/projects')
 const { getProductsByProject } = require('../controllers/products')
+const { isAdmin } = require('../../middlewares/Auth')
 
 const projectRoutes = express.Router()
 
-projectRoutes.route('/').get(protect, getProjects).post(protect, postProject)
+projectRoutes.route('/').get(getProjects).post(postProject)
 
-projectRoutes
-  .route('/:id')
-  .put(protect, updateProject)
-  .delete(protect, admin, deleteProject)
+projectRoutes.route('/:id').put(updateProject).delete([isAdmin], deleteProject)
 
-projectRoutes.route('/:projectId/products').get(protect, getProductsByProject)
+projectRoutes.route('/:projectId/products').get(getProductsByProject)
 
 module.exports = projectRoutes

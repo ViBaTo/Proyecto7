@@ -1,21 +1,19 @@
 const express = require('express')
-const { protect, admin } = require('../../middlewares/Auth')
+
 const {
   updateProduct,
   postProduct,
   deleteProduct,
   getProductsByProject
 } = require('../controllers/products')
+const { isAdmin } = require('../../middlewares/Auth')
 
 const productRoutes = express.Router()
 
-productRoutes.route('/').get(protect, updateProduct).post(protect, postProduct)
+productRoutes.route('/').get(updateProduct).post(postProduct)
 
-productRoutes
-  .route('/:id')
-  .put(protect, updateProduct)
-  .delete(protect, admin, deleteProduct)
+productRoutes.route('/:id').put(updateProduct).delete([isAdmin], deleteProduct)
 
-productRoutes.route('/project/:projectId').get(protect, getProductsByProject)
+productRoutes.route('/project/:projectId').get(getProductsByProject)
 
 module.exports = productRoutes

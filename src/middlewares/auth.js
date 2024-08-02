@@ -1,35 +1,45 @@
-const jwt = require('jsonwebtoken')
 const User = require('../api/models/users')
+const { verifyJwt } = require('../config/jwt')
 
-const protect = async (req, res, next) => {
-  let token
+const isAuth = async (req, res, next) => {
+  try {
+    const token = req.headers.authorization
 
-  if (
-    req.headers.authorization &&
-    req.headers.authorization.startsWith('Bearer')
-  ) {
-    try {
-      token = req.headers.authorization.split(' ')[1]
-      const decoded = jwt.verify(token, process.env.JWT_SECRET.trim())
+    const parsedToken = token.replace('Bearer ', '')
 
-      req.user = await User.findById(decoded.id).select('-password')
+    const { id } = verifyJwt(parsedToken)
 
-      next()
-    } catch (error) {
-      console.error(error)
-      res.status(401).json({ message: 'Not authorized, token failed' })
-    }
-  } else {
-    res.status(401).json({ message: 'Not authorized, no token' })
-  }
-}
+    const user = await User.findById(id)
 
-const admin = (req, res, next) => {
-  if (req.user && req.user.role === 'admin') {
+    user.password = null
+    req.user = user
+
     next()
-  } else {
-    res.status(401).json({ message: 'Not authorized as an admin' })
+  } catch (error) {
+    return res.status(400).json({ message: 'Not authorized' })
+  }
+}
+const isAdmin = async (req, res, next) => {
+  try {
+    const token = req.headers.authorization
+
+    const parsedToken = token.replace('Bearer ', '')
+
+    const { id } = verifyJwt(parsedToken)
+
+    const user = await User.findById(id)
+
+    if (user.role === 'gerente') {
+      user.password = null
+      req.user = user
+    } else {
+      return res.status(400).json({ message: 'Only gerente can do this' })
+    }
+
+    next()
+  } catch (error) {
+    return res.status(400).json({ message: 'Not authorized' })
   }
 }
 
-module.exports = { protect, admin }
+module.exports = { isAuth, isAdmin }
