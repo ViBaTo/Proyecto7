@@ -3,12 +3,10 @@ const Project = require('../models/projects')
 
 const getProducts = async (req, res) => {
   try {
-    const products = await Product.find()
-      .populate('createdBy', 'name email')
-      .populate('project', 'name')
+    const products = await Project.find({})
     res.json(products)
   } catch (error) {
-    res.status(500).json({ message: 'Error getting products' })
+    res.status(500).json({ message: 'Error getting products', error })
   }
 }
 

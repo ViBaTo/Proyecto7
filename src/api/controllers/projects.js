@@ -1,11 +1,8 @@
-const Product = require('../models/products')
 const Project = require('../models/projects')
 
 const getProjects = async (req, res) => {
   try {
-    const projects = await Project.find()
-      .populate('createdBy', 'name email')
-      .populate('products')
+    const projects = await Project.find({})
     res.json(projects)
   } catch (error) {
     res.status(500).json({ message: 'Error getting projects', error })
