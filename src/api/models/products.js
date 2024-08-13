@@ -20,6 +20,8 @@ const productSchema = new mongoose.Schema(
       ref: 'User',
       required: false
     },
+    img: { type: String, trim: true, required: false },
+
     verified: { type: Boolean, required: true, default: false }
   },
 

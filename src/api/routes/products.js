@@ -4,15 +4,23 @@ const {
   updateProduct,
   postProduct,
   deleteProduct,
-  getProductsByProject
+  getProductsByProject,
+  getProducts
 } = require('../controllers/products')
-const { isAdmin } = require('../../middlewares/Auth')
+const { isAdmin, isAuth } = require('../../middlewares/Auth')
+const { upload } = require('../../middlewares/upload')
 
 const productRoutes = express.Router()
 
-productRoutes.route('/').get(updateProduct).post(postProduct)
+productRoutes
+  .route('/')
+  .get(getProducts)
+  .post(upload.single('img'), postProduct)
 
-productRoutes.route('/:id').put(updateProduct).delete([isAdmin], deleteProduct)
+productRoutes
+  .route('/:id')
+  .put(updateProduct)
+  .delete([isAuth], [isAdmin], deleteProduct)
 
 productRoutes.route('/project/:projectId').get(getProductsByProject)
 

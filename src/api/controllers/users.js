@@ -1,6 +1,6 @@
 const { generateSign } = require('../../config/jwt')
-const User = require('../models/users')
 const bcrypt = require('bcrypt')
+const User = require('../models/users')
 
 const getUsers = async (req, res, next) => {
   try {
@@ -46,11 +46,12 @@ const deleteUser = async (req, res) => {
 
 const register = async (req, res, next) => {
   try {
+    const { name, email, password, role } = req.body
     const newUser = new User({
-      name: req.body.name,
-      email: req.body.email,
-      password: req.body.password,
-      rol: 'comercial'
+      name,
+      email,
+      password,
+      role
     })
 
     const duplicatedUser = await User.findOne({ email: req.body.email })
@@ -60,7 +61,12 @@ const register = async (req, res, next) => {
     }
 
     const userSaved = await newUser.save()
-    return res.status(201).json(userSaved)
+    const token = generateSign(userSaved._id)
+    return res.status(201).json({
+      message: 'User registered successfully',
+      user: userSaved,
+      token
+    })
   } catch (error) {
     res.status(400).json({ message: 'Register not working' })
   }
@@ -71,16 +77,21 @@ const login = async (req, res, next) => {
     const user = await User.findOne({ email: req.body.email })
 
     if (!user) {
-      return res.status(400).json({ message: 'User does not esxist' })
+      return res.status(400).json({ message: 'User does not exist' })
     }
+
     if (bcrypt.compareSync(req.body.password, user.password)) {
-      const token = generateSign(user._id)
-      return res.status(200).json({ user, token })
+      const token = generateSign(user._id) // Generar el token con el ID del usuario
+      return res.status(200).json({
+        message: 'Login successful',
+        user,
+        token // Devolver el token junto con la información del usuario
+      })
     } else {
       return res.status(400).json({ message: 'Password invalid' })
     }
   } catch (error) {
-    res.status(400).json({ message: "login doesn't working" })
+    res.status(400).json({ message: "Login doesn't work" })
   }
 }
 

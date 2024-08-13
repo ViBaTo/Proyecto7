@@ -5,20 +5,29 @@ const isAuth = async (req, res, next) => {
   try {
     const token = req.headers.authorization
 
+    if (!token) {
+      return res.status(401).json({ message: 'No token provided' })
+    }
+
     const parsedToken = token.replace('Bearer ', '')
 
     const { id } = verifyJwt(parsedToken)
 
     const user = await User.findById(id)
 
+    if (!user) {
+      return res.status(401).json({ message: 'User not found' })
+    }
+
     user.password = null
     req.user = user
 
     next()
   } catch (error) {
-    return res.status(400).json({ message: 'Not authorized' })
+    return res.status(401).json({ message: 'Invalid token' })
   }
 }
+
 const isAdmin = async (req, res, next) => {
   try {
     const token = req.headers.authorization

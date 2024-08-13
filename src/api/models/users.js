@@ -19,7 +19,7 @@ const userSchema = new mongoose.Schema(
     role: {
       type: String,
       enum: ['gerente', 'comercial'],
-      default: 'comercial'
+      required: true
     }
   },
   {
@@ -28,10 +28,16 @@ const userSchema = new mongoose.Schema(
   }
 )
 
-userSchema.pre('save', function () {
-  this.password = bcrypt.hashSync(this.password, 10)
+userSchema.pre('save', function (next) {
+  if (!this.isModified('password')) {
+    return next()
+  }
+
+  const salt = bcrypt.genSaltSync(10)
+  this.password = bcrypt.hashSync(this.password, salt)
+  next()
 })
 
-const User = mongoose.model('users', userSchema, 'users')
+const User = mongoose.model('User', userSchema, 'users')
 
 module.exports = User

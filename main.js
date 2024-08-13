@@ -1,15 +1,22 @@
 require('dotenv').config()
 const express = require('express')
+const bodyParser = require('body-parser')
 const { connectDB } = require('./src/config/db')
 /* const mongoose = require('mongoose') */
 const projectRoutes = require('./src/api/routes/projects')
 const userRoutes = require('./src/api/routes/users')
 const productRoutes = require('./src/api/routes/products')
-const seedData = require('./src/utils/seeds')
+/* const seedData = require('./src/utils/seeds') */
+const { connectCloudinary } = require('./src/config/cloudinary')
 const app = express()
 
 connectDB()
+connectCloudinary()
+
 const PORT = process.env.PORT
+
+app.use(bodyParser.json())
+app.use(bodyParser.urlencoded({ extended: true }))
 app.use(express.json())
 
 app.use('/api/v1/projects', projectRoutes)
@@ -25,5 +32,5 @@ app.use('*', (req, res) => {
 })
 
 app.listen(PORT, () => {
-  console.log('Servidor desplegado en http://localhost:${PORT}')
+  console.log(`Servidor desplegado en http://localhost:${PORT}`)
 })
